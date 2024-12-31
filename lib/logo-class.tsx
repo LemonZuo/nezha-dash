@@ -2,6 +2,9 @@ import React from "react"
 import type { SVGProps } from "react"
 
 export function GetFontLogoClass(platform: string): string {
+    if (platform == 'rocky') {
+        return 'rocky-linux';
+    }
   if (
     [
       "almalinux",
