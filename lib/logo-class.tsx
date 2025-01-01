@@ -2,9 +2,6 @@ import React from "react"
 import type { SVGProps } from "react"
 
 export function GetFontLogoClass(platform: string): string {
-    if (platform == 'rocky') {
-        return 'rocky-linux';
-    }
   if (
     [
       "almalinux",
@@ -68,6 +65,9 @@ export function GetFontLogoClass(platform: string): string {
   if (platform.toLowerCase().includes("opensuse")) {
     return "opensuse"
   }
+  if (platform == 'rocky') {
+    return 'rocky-linux';
+  }
   return "tux"
 }
 
@@ -112,6 +112,7 @@ export function GetOsName(platform: string): string {
       "ubuntu",
       "void",
       "zorin",
+      "rocky"
     ].indexOf(platform) > -1
   ) {
     return platform.charAt(0).toUpperCase() + platform.slice(1)
