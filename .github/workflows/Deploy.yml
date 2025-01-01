@@ -32,7 +32,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@master
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
