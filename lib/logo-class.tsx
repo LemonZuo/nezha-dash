@@ -37,7 +37,6 @@ export function GetFontLogoClass(platform: string): string {
       "pop-os",
       "raspberry-pi",
       "redhat",
-      "rocky-linux",
       "sabayon",
       "slackware",
       "snappy",
@@ -53,6 +52,9 @@ export function GetFontLogoClass(platform: string): string {
   if (platform == "darwin") {
     return "apple"
   }
+  if (["rocky", "rocky-linux"].indexOf(platform) > -1) {
+    return "rocky-linux"
+  }
   if (["openwrt", "linux", "immortalwrt"].indexOf(platform) > -1) {
     return "tux"
   }
@@ -64,9 +66,6 @@ export function GetFontLogoClass(platform: string): string {
   }
   if (platform.toLowerCase().includes("opensuse")) {
     return "opensuse"
-  }
-  if (platform == 'rocky') {
-    return 'rocky-linux';
   }
   return "tux"
 }
@@ -111,14 +110,16 @@ export function GetOsName(platform: string): string {
       "tux",
       "ubuntu",
       "void",
-      "zorin",
-      "rocky"
+      "zorin"
     ].indexOf(platform) > -1
   ) {
     return platform.charAt(0).toUpperCase() + platform.slice(1)
   }
   if (platform == "darwin") {
     return "macOS"
+  }
+  if (["rocky", "rocky-linux"].indexOf(platform) > -1) {
+    return "Rocky"
   }
   if (["openwrt", "linux", "immortalwrt"].indexOf(platform) > -1) {
     return "Linux"
