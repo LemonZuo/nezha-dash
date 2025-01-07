@@ -19,7 +19,10 @@ export default function Switch({
   const scrollRef = useRef<HTMLDivElement>(null)
   const tagRefs = useRef(allTag.map(() => createRef<HTMLDivElement>()))
   const t = useTranslations("ServerListClient")
-  const [indicator, setIndicator] = useState<{ x: number; w: number }>({ x: 0, w: 0 })
+  const [indicator, setIndicator] = useState<{ x: number; w: number }>({
+    x: 0,
+    w: 0,
+  })
 
   useEffect(() => {
     const savedTag = sessionStorage.getItem("selectedTag")
@@ -50,12 +53,8 @@ export default function Switch({
   useEffect(() => {
     const currentTagElement = tagRefs.current[allTag.indexOf(nowTag)]?.current
     if (currentTagElement) {
-      const parentPadding = 1
       setIndicator({
-        x:
-          allTag.indexOf(nowTag) !== 0
-            ? currentTagElement.offsetLeft - parentPadding
-            : currentTagElement.offsetLeft,
+        x: currentTagElement.offsetLeft,
         w: currentTagElement.offsetWidth,
       })
     }
