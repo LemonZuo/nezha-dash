@@ -112,7 +112,7 @@
     "p_1079-1199_Simpleandbeautifuldashbo": "簡單美觀的儀錶板"
   },
   "Overview": {
-    "p_2277-2331_Overview": "👋 概覽",
+    "p_2277-2331_Overview": "概覽",
     "p_2390-2457_wherethetimeis": "當前時間"
   },
   "Global": {
@@ -125,5 +125,15 @@
     "h1_490-590_404NotFound": "伺服器未找到",
     "h1_490-590_404NotFoundBack": "返回",
     "h1_490-590_Error": "發生錯誤"
+  },
+  "DashCommand": {
+    "TypeCommand": "輸入命令或搜尋",
+    "NoResults": "沒有結果",
+    "Servers": "伺服器",
+    "Shortcuts": "快捷鍵",
+    "ToggleLightMode": "切換亮色模式",
+    "ToggleDarkMode": "切換暗色模式",
+    "ToggleSystemMode": "切換系統模式",
+    "Home": "首頁"
   }
 }
