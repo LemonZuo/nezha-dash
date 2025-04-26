@@ -1,14 +1,14 @@
 "use client"
 
-import { useServerData } from "@/app/lib/server-data-context"
+import { useFilter } from "@/app/context/network-filter-context"
+import { useServerData } from "@/app/context/server-data-context"
+import { useStatus } from "@/app/context/status-context"
 import ServerCard from "@/components/ServerCard"
 import ServerCardInline from "@/components/ServerCardInline"
 import Switch from "@/components/Switch"
 import GlobalLoading from "@/components/loading/GlobalLoading"
 import { Loader } from "@/components/loading/Loader"
 import getEnv from "@/lib/env-entry"
-import { useFilter } from "@/lib/network-filter-context"
-import { useStatus } from "@/lib/status-context"
 import { cn } from "@/lib/utils"
 import { MapIcon, ViewColumnsIcon } from "@heroicons/react/20/solid"
 import { useTranslations } from "next-intl"
@@ -19,6 +19,84 @@ const ServerGlobal = dynamic(() => import("./Global"), {
   ssr: false,
   loading: () => <GlobalLoading />,
 })
+
+const sortServersByDisplayIndex = (servers: any[]) => {
+  return servers.sort((a, b) => {
+    const displayIndexDiff = (b.display_index || 0) - (a.display_index || 0)
+    return displayIndexDiff !== 0 ? displayIndexDiff : a.id - b.id
+  })
+}
+
+const filterServersByStatus = (servers: any[], status: string) => {
+  return status === "all"
+    ? servers
+    : servers.filter((server) => [status].includes(server.online_status ? "online" : "offline"))
+}
+
+const filterServersByTag = (servers: any[], tag: string, defaultTag: string) => {
+  return tag === defaultTag ? servers : servers.filter((server) => server.tag === tag)
+}
+
+const sortServersByNetwork = (servers: any[]) => {
+  return [...servers].sort((a, b) => {
+    if (!a.online_status && b.online_status) return 1
+    if (a.online_status && !b.online_status) return -1
+    if (!a.online_status && !b.online_status) return 0
+    return b.status.NetInSpeed + b.status.NetOutSpeed - (a.status.NetInSpeed + a.status.NetOutSpeed)
+  })
+}
+
+const getTagCounts = (servers: any[]) => {
+  return servers.reduce((acc: Record<string, number>, server) => {
+    if (server.tag) {
+      acc[server.tag] = (acc[server.tag] || 0) + 1
+    }
+    return acc
+  }, {})
+}
+
+const LoadingState = ({ t }: { t: any }) => (
+  <div className="flex min-h-96 flex-col items-center justify-center ">
+    <div className="flex items-center gap-2 font-semibold text-sm">
+      <Loader visible={true} />
+      {t("connecting")}...
+    </div>
+  </div>
+)
+
+const ErrorState = ({ error, t }: { error: Error; t: any }) => (
+  <div className="flex flex-col items-center justify-center">
+    <p className="font-medium text-sm opacity-40">{error.message}</p>
+    <p className="font-medium text-sm opacity-40">{t("error_message")}</p>
+  </div>
+)
+
+const ServerList = ({
+  servers,
+  inline,
+  containerRef,
+}: { servers: any[]; inline: string; containerRef: any }) => {
+  if (inline === "1") {
+    return (
+      <section
+        ref={containerRef}
+        className="scrollbar-hidden flex flex-col gap-2 overflow-x-scroll"
+      >
+        {servers.map((serverInfo) => (
+          <ServerCardInline key={serverInfo.id} serverInfo={serverInfo} />
+        ))}
+      </section>
+    )
+  }
+
+  return (
+    <section ref={containerRef} className="grid grid-cols-1 gap-2 md:grid-cols-2">
+      {servers.map((serverInfo) => (
+        <ServerCard key={serverInfo.id} serverInfo={serverInfo} />
+      ))}
+    </section>
+  )
+}
 
 export default function ServerListClient() {
   const { status } = useStatus()
@@ -36,12 +114,14 @@ export default function ServerListClient() {
     if (inlineState !== null) {
       setInline(inlineState)
     }
-  }, [])
 
-  useEffect(() => {
+    const showMapState = localStorage.getItem("showMap")
+    if (showMapState !== null) {
+      setShowMap(showMapState === "true")
+    }
+
     const savedTag = sessionStorage.getItem("selectedTag") || defaultTag
     setTag(savedTag)
-
     restoreScrollPosition()
   }, [])
 
@@ -71,90 +151,56 @@ export default function ServerListClient() {
 
   const { data, error } = useServerData()
 
-  if (error)
-    return (
-      <div className="flex flex-col items-center justify-center">
-        <p className="text-sm font-medium opacity-40">{error.message}</p>
-        <p className="text-sm font-medium opacity-40">{t("error_message")}</p>
-      </div>
-    )
-
-  if (!data?.result)
-    return (
-      <div className="flex flex-col items-center min-h-96 justify-center ">
-        <div className="font-semibold flex items-center gap-2 text-sm">
-          <Loader visible={true} />
-          {t("connecting")}...
-        </div>
-      </div>
-    )
+  if (error) return <ErrorState error={error} t={t} />
+  if (!data?.result) return <LoadingState t={t} />
 
   const { result } = data
-  const sortedServers = result.sort((a, b) => {
-    const displayIndexDiff = (b.display_index || 0) - (a.display_index || 0)
-    if (displayIndexDiff !== 0) return displayIndexDiff
-    return a.id - b.id
-  })
-
-  const filteredServersByStatus =
-    status === "all"
-      ? sortedServers
-      : sortedServers.filter((server) =>
-          [status].includes(server.online_status ? "online" : "offline"),
-        )
-
+  const sortedServers = sortServersByDisplayIndex(result)
+  const filteredServersByStatus = filterServersByStatus(sortedServers, status)
   const allTag = filteredServersByStatus.map((server) => server.tag).filter(Boolean)
   const uniqueTags = [...new Set(allTag)]
   uniqueTags.unshift(defaultTag)
 
-  const filteredServers =
-    tag === defaultTag
-      ? filteredServersByStatus
-      : filteredServersByStatus.filter((server) => server.tag === tag)
+  let filteredServers = filterServersByTag(filteredServersByStatus, tag, defaultTag)
 
   if (filter) {
-    filteredServers.sort((a, b) => {
-      if (!a.online_status && b.online_status) return 1
-      if (a.online_status && !b.online_status) return -1
-      if (!a.online_status && !b.online_status) return 0
-      return (
-        b.status.NetInSpeed + b.status.NetOutSpeed - (a.status.NetInSpeed + a.status.NetOutSpeed)
-      )
-    })
+    filteredServers = sortServersByNetwork(filteredServers)
   }
 
-  const tagCountMap: Record<string, number> = {}
-  filteredServersByStatus.forEach((server) => {
-    if (server.tag) {
-      tagCountMap[server.tag] = (tagCountMap[server.tag] || 0) + 1
-    }
-  })
+  const tagCountMap = getTagCounts(filteredServersByStatus)
 
   return (
     <>
-      <section className="flex items-center gap-2 w-full overflow-hidden">
+      <section className="flex w-full items-center gap-2 overflow-hidden">
         <button
+          type="button"
           onClick={() => {
-            setShowMap(!showMap)
+            const newShowMap = !showMap
+            setShowMap(newShowMap)
+            localStorage.setItem("showMap", String(newShowMap))
           }}
           className={cn(
-            "rounded-[50px] text-white cursor-pointer [text-shadow:_0_1px_0_rgb(0_0_0_/_20%)] bg-blue-600 p-[10px] transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]",
+            "inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer flex-col items-center gap-0 rounded-[50px] bg-blue-100 p-[10px] text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100 ",
             {
-              "shadow-[inset_0_1px_0_rgba(0,0,0,0.2)] bg-blue-500": showMap,
+              "inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
+                showMap,
             },
           )}
         >
           <MapIcon className="size-[13px]" />
         </button>
         <button
+          type="button"
           onClick={() => {
-            setInline(inline === "0" ? "1" : "0")
-            localStorage.setItem("inline", inline === "0" ? "1" : "0")
+            const newInline = inline === "0" ? "1" : "0"
+            setInline(newInline)
+            localStorage.setItem("inline", newInline)
           }}
           className={cn(
-            "rounded-[50px] text-white cursor-pointer [text-shadow:_0_1px_0_rgb(0_0_0_/_20%)] bg-blue-600  p-[10px] transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]  ",
+            "inset-shadow-2xs inset-shadow-white/20 flex cursor-pointer flex-col items-center gap-0 rounded-[50px] bg-blue-100 p-[10px] text-blue-600 transition-all dark:bg-blue-900 dark:text-blue-100 ",
             {
-              "shadow-[inset_0_1px_0_rgba(0,0,0,0.2)] bg-blue-500": inline === "1",
+              "inset-shadow-black/20 bg-blue-600 text-white dark:bg-blue-100 dark:text-blue-600":
+                inline === "1",
             },
           )}
         >
@@ -170,24 +216,7 @@ export default function ServerListClient() {
         )}
       </section>
       {showMap && <ServerGlobal />}
-      {inline === "1" && (
-        <section
-          ref={containerRef}
-          className="flex flex-col gap-2 overflow-x-scroll scrollbar-hidden"
-        >
-          {filteredServers.map((serverInfo) => (
-            <ServerCardInline key={serverInfo.id} serverInfo={serverInfo} />
-          ))}
-        </section>
-      )}
-
-      {inline === "0" && (
-        <section ref={containerRef} className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          {filteredServers.map((serverInfo) => (
-            <ServerCard key={serverInfo.id} serverInfo={serverInfo} />
-          ))}
-        </section>
-      )}
+      <ServerList servers={filteredServers} inline={inline} containerRef={containerRef} />
     </>
   )
 }

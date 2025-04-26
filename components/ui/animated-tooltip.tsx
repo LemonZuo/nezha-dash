@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import React from "react"
 
 export const AnimatedTooltip = ({
   items,
@@ -15,7 +14,7 @@ export const AnimatedTooltip = ({
   return (
     <>
       {items.map((item) => (
-        <div className="group relative -mr-4" key={item.name}>
+        <div className="group -mr-4 relative" key={item.name}>
           <Link href="https://buycoffee.top" target="_blank">
             <Image
               width={40}

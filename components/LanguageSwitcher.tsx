@@ -10,9 +10,8 @@ import {
 import { localeItems } from "@/i18n-metadata"
 import { setUserLocale } from "@/i18n/locale"
 import { cn } from "@/lib/utils"
-import { CheckCircleIcon } from "@heroicons/react/20/solid"
+import { CheckCircleIcon, LanguageIcon } from "@heroicons/react/20/solid"
 import { useLocale } from "next-intl"
-import * as React from "react"
 
 export function LanguageSwitcher() {
   const locale = useLocale()
@@ -28,9 +27,9 @@ export function LanguageSwitcher() {
         <Button
           variant="outline"
           size="sm"
-          className="rounded-full px-[9px] bg-white dark:bg-black cursor-pointer hover:bg-accent/50 dark:hover:bg-accent/50"
+          className="cursor-pointer rounded-full bg-white px-[9px] hover:bg-accent/50 dark:bg-black dark:hover:bg-accent/50"
         >
-          {localeItems.find((item) => item.code === locale)?.name}
+          <LanguageIcon className="size-4" />
           <span className="sr-only">Change language</span>
         </Button>
       </DropdownMenuTrigger>
@@ -41,7 +40,7 @@ export function LanguageSwitcher() {
             onSelect={(e) => handleSelect(e, item.code)}
             className={cn(
               {
-                "bg-muted gap-3 font-semibold": locale === item.code,
+                "gap-3 bg-muted font-semibold": locale === item.code,
               },
               {
                 "rounded-t-[5px]": index === localeItems.length - 1,

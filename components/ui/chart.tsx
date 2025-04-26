@@ -164,12 +164,19 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-sm border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+          "grid min-w-[8rem] items-start gap-1.5 overflow-hidden rounded-sm border border-border/50 bg-stone-100 text-xs dark:bg-stone-900",
           className,
         )}
       >
-        {!nestLabel ? tooltipLabel : null}
-        <div className="grid gap-1.5">
+        {!nestLabel && (
+          <div className="-mb-1 mx-auto px-2.5 pt-1">{!nestLabel ? tooltipLabel : null}</div>
+        )}
+
+        <div
+          className={cn("grid gap-1.5 bg-white px-2.5 py-1.5 dark:bg-black", {
+            "border-t-[1px]": !nestLabel,
+          })}
+        >
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
@@ -226,13 +233,14 @@ const ChartTooltipContent = React.forwardRef<
                       {item.value && (
                         <span
                           className={cn(
-                            "ml-2 font-mono font-medium tabular-nums text-foreground",
+                            "ml-2 font-medium text-foreground tabular-nums",
                             payload.length === 1 && "-ml-9",
                           )}
                         >
                           {typeof item.value === "number"
-                            ? item.value.toFixed(3).toLocaleString()
-                            : item.value}
+                            ? item.value.toFixed(2).toLocaleString()
+                            : item.value}{" "}
+                          ms
                         </span>
                       )}
                     </div>

@@ -1,8 +1,8 @@
 "use client"
 
-import { useTooltip } from "@/app/(main)/ClientComponents/detail/TooltipContext"
 import MapTooltip from "@/app/(main)/ClientComponents/main/MapTooltip"
-import { countryCoordinates } from "@/lib/geo-limit"
+import { useTooltip } from "@/app/context/tooltip-context"
+import { countryCoordinates } from "@/lib/geo/geo-limit"
 import { geoEquirectangular, geoPath } from "d3-geo"
 
 interface InteractiveMapProps {
@@ -32,14 +32,15 @@ export function InteractiveMap({
   const path = geoPath().projection(projection)
 
   return (
-    <div className="relative w-full aspect-[2/1]" onMouseLeave={() => setTooltipData(null)}>
+    <div className="relative aspect-[2/1] w-full" onMouseLeave={() => setTooltipData(null)}>
       <svg
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-auto"
+        className="h-auto w-full"
       >
+        <title>Interactive Map</title>
         <defs>
           <pattern id="dots" width="2" height="2" patternUnits="userSpaceOnUse">
             <circle cx="1" cy="1" r="0.5" fill="currentColor" />
@@ -62,12 +63,12 @@ export function InteractiveMap({
 
             return (
               <path
-                key={index}
+                key={feature.properties.iso_a2_eh + String(index)}
                 d={path(feature) || ""}
                 className={
                   isHighlighted
-                    ? "fill-green-700 hover:fill-green-600    dark:fill-green-900 dark:hover:fill-green-700 transition-all cursor-pointer"
-                    : "fill-neutral-200/50 dark:fill-neutral-800 stroke-neutral-300/40 dark:stroke-neutral-700 stroke-[0.5]"
+                    ? "cursor-pointer fill-green-700 transition-all hover:fill-green-600 dark:fill-green-900 dark:hover:fill-green-700"
+                    : "fill-neutral-200/50 stroke-[0.5] stroke-neutral-300/40 dark:fill-neutral-800 dark:stroke-neutral-700"
                 }
                 onMouseEnter={() => {
                   if (!isHighlighted) {
@@ -81,6 +82,7 @@ export function InteractiveMap({
                         (server: any) => server.host.CountryCode?.toUpperCase() === countryCode,
                       )
                       .map((server: any) => ({
+                        id: server.id,
                         name: server.name,
                         status: server.online_status,
                       }))
@@ -121,6 +123,7 @@ export function InteractiveMap({
                   const countryServers = nezhaServerList.result
                     .filter((server: any) => server.host.CountryCode?.toUpperCase() === countryCode)
                     .map((server: any) => ({
+                      id: server.id,
                       name: server.name,
                       status: server.online_status,
                     }))
@@ -137,7 +140,7 @@ export function InteractiveMap({
                   cx={x}
                   cy={y}
                   r={4}
-                  className="fill-sky-700 stroke-white hover:fill-sky-600 dark:fill-sky-900 dark:hover:fill-sky-700 transition-all"
+                  className="fill-sky-700 stroke-white transition-all hover:fill-sky-600 dark:fill-sky-900 dark:hover:fill-sky-700"
                 />
               </g>
             )

@@ -85,7 +85,9 @@
     "CPU": "CPU",
     "Upload": "上传",
     "Download": "下载",
-    "Load": "负载"
+    "Load": "负载",
+    "LastActive": "最后上报时间",
+    "BootTime": "启动时间"
   },
   "ServerDetailChartClient": {
     "chart_fetch_error_message": "获取服务器详情失败，请检查您的环境变量并检查服务器控制台",
@@ -111,7 +113,7 @@
     "p_1079-1199_Simpleandbeautifuldashbo": "简单美观的仪表板"
   },
   "Overview": {
-    "p_2277-2331_Overview": "👋 概览",
+    "p_2277-2331_Overview": "概览",
     "p_2390-2457_wherethetimeis": "当前时间"
   },
   "Global": {
@@ -124,5 +126,15 @@
     "h1_490-590_404NotFound": "服务器不存在",
     "h1_490-590_404NotFoundBack": "返回",
     "h1_490-590_Error": "发生错误"
+  },
+  "DashCommand": {
+    "TypeCommand": "输入命令或搜索",
+    "NoResults": "结果为空",
+    "Servers": "服务器",
+    "Shortcuts": "快捷键",
+    "ToggleLightMode": "切换亮色模式",
+    "ToggleDarkMode": "切换暗色模式",
+    "ToggleSystemMode": "切换系统模式",
+    "Home": "首页"
   }
 }

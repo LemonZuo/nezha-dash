@@ -1,12 +1,13 @@
 "use client"
 
-import { ReactNode, createContext, useContext, useState } from "react"
+import { type ReactNode, createContext, useContext, useState } from "react"
 
 export interface TooltipData {
   centroid: [number, number]
   country: string
   count: number
   servers: Array<{
+    id: string
     name: string
     status: boolean
   }>

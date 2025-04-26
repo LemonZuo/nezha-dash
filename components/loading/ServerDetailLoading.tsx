@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation"
 export function ServerDetailChartLoading() {
   return (
     <div>
-      <section className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-3">
-        <Skeleton className="h-[182px] w-full rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
-        <Skeleton className="h-[182px] w-full rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
-        <Skeleton className="h-[182px] w-full rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
-        <Skeleton className="h-[182px] w-full rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
-        <Skeleton className="h-[182px] w-full rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
-        <Skeleton className="h-[182px] w-full rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <Skeleton className="h-[182px] w-full animate-none rounded-[5px] bg-muted-foreground/10" />
+        <Skeleton className="h-[182px] w-full animate-none rounded-[5px] bg-muted-foreground/10" />
+        <Skeleton className="h-[182px] w-full animate-none rounded-[5px] bg-muted-foreground/10" />
+        <Skeleton className="h-[182px] w-full animate-none rounded-[5px] bg-muted-foreground/10" />
+        <Skeleton className="h-[182px] w-full animate-none rounded-[5px] bg-muted-foreground/10" />
+        <Skeleton className="h-[182px] w-full animate-none rounded-[5px] bg-muted-foreground/10" />
       </section>
     </div>
   )
@@ -24,14 +24,14 @@ export function ServerDetailLoading() {
     <>
       <div
         onClick={() => {
-          router.push(`/`)
+          router.push("/")
         }}
-        className="flex flex-none cursor-pointer font-semibold leading-none items-center break-all tracking-tight gap-0.5 text-xl"
+        className="flex flex-none cursor-pointer items-center gap-0.5 break-all font-semibold text-xl leading-none tracking-tight"
       >
         <BackIcon />
-        <Skeleton className="h-[20px] w-24 rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
+        <Skeleton className="h-[20px] w-24 animate-none rounded-[5px] bg-muted-foreground/10" />
       </div>
-      <Skeleton className="flex flex-wrap gap-2 h-[81px] w-1/2 mt-3 rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
+      <Skeleton className="mt-3 flex h-[81px] w-1/2 animate-none flex-wrap gap-2 rounded-[5px] bg-muted-foreground/10" />
     </>
   )
 }
