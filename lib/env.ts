@@ -14,6 +14,10 @@ export interface ServerEnvConfig {
   ForceShowAllServers: boolean
   /** Site password */
   SitePassword: string
+  /** Enable packet loss calculation */
+  EnablePacketLossCalculation: boolean
+  /** Komari API base URL */
+  KomariBaseUrl: string
 }
 
 /**
@@ -48,6 +52,8 @@ export interface ClientEnvConfig {
   ShowTagCount: boolean
   /** Show IP information */
   ShowIpInfo: boolean
+  /** Enable Komari panel compatibility */
+  Komari: boolean
 }
 
 /**
@@ -124,6 +130,8 @@ export function getAllEnvConfig(): { server: ServerEnvConfig; client: ClientEnvC
       DefaultLocale: getServerEnv("DefaultLocale") || "",
       ForceShowAllServers: parseBoolean(getServerEnv("ForceShowAllServers")),
       SitePassword: getServerEnv("SitePassword") || "",
+      EnablePacketLossCalculation: parseBoolean(getServerEnv("EnablePacketLossCalculation")),
+      KomariBaseUrl: getServerEnv("KomariBaseUrl") || "",
     },
     client: {
       NezhaFetchInterval: parseNumber(getClientEnv("NezhaFetchInterval"), 5000),
@@ -140,6 +148,7 @@ export function getAllEnvConfig(): { server: ServerEnvConfig; client: ClientEnvC
       DisableIndex: parseBoolean(getClientEnv("DisableIndex")),
       ShowTagCount: parseBoolean(getClientEnv("ShowTagCount")),
       ShowIpInfo: parseBoolean(getClientEnv("ShowIpInfo")),
+      Komari: parseBoolean(getClientEnv("Komari")),
     },
   }
 }

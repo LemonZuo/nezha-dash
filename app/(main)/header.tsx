@@ -1,16 +1,18 @@
 "use client"
 
-import AnimateCountClient from "@/components/AnimatedCount"
+import { DateTime } from "luxon"
+import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { memo, useCallback, useEffect, useState } from "react"
+import { DriverBadge } from "@/app/(main)/ClientComponents/DriverBadge"
+import { AnimateCountClient } from "@/components/AnimatedCount"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
+import { NetworkButton } from "@/components/NetworkButton"
+import { SearchButton } from "@/components/SearchButton"
 import { ModeToggle } from "@/components/ThemeSwitcher"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-
 import getEnv from "@/lib/env-entry"
-import { DateTime } from "luxon"
-import { useTranslations } from "next-intl"
-import { useRouter } from "next/navigation"
-import { memo, useCallback, useEffect, useState } from "react"
 
 interface TimeState {
   hh: number
@@ -117,7 +119,8 @@ function Header() {
   return (
     <div className="mx-auto w-full max-w-5xl">
       <section className="flex items-center justify-between">
-        <section
+        <button
+          type="button"
           onClick={handleLogoClick}
           className="flex cursor-pointer items-center font-medium text-base transition-opacity duration-300 hover:opacity-50"
         >
@@ -142,11 +145,14 @@ function Header() {
           <p className="hidden font-medium text-sm opacity-40 md:block">
             {customDescription ? customDescription : t("p_1079-1199_Simpleandbeautifuldashbo")}
           </p>
-        </section>
+        </button>
         <section className="flex items-center gap-2">
+          <DriverBadge />
           <div className="hidden sm:block">
             <Links />
           </div>
+          <NetworkButton />
+          <SearchButton />
           <LanguageSwitcher />
           <ModeToggle />
         </section>

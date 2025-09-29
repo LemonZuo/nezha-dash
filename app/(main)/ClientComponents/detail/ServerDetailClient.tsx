@@ -1,25 +1,40 @@
 "use client"
 
-import { useServerData } from "@/app/context/server-data-context"
-import { BackIcon } from "@/components/Icon"
-import ServerFlag from "@/components/ServerFlag"
-import { ServerDetailLoading } from "@/components/loading/ServerDetailLoading"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { cn, formatBytes, formatNezhaInfo } from "@/lib/utils"
 import countries from "i18n-iso-countries"
 import enLocale from "i18n-iso-countries/langs/en.json"
-import { useTranslations } from "next-intl"
 import { notFound, useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
+import { useServerData } from "@/app/context/server-data-context"
+import { BackIcon } from "@/components/Icon"
+import { ServerDetailLoading } from "@/components/loading/ServerDetailLoading"
+import ServerFlag from "@/components/ServerFlag"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  cn,
+  convertEmojiToCountryCode,
+  formatBytes,
+  formatNezhaInfo,
+  isEmojiFlag,
+} from "@/lib/utils"
 
 countries.registerLocale(enLocale)
 
-export default function ServerDetailClient({
-  server_id,
-}: {
-  server_id: number
-}) {
+// Function to get country name, handling both country codes and emoji flags
+function getCountryDisplayName(countryCode: string): string {
+  if (isEmojiFlag(countryCode)) {
+    // Convert emoji to country code for name lookup
+    const convertedCode = convertEmojiToCountryCode(countryCode)
+    if (convertedCode) {
+      return countries.getName(convertedCode, "en") || ""
+    }
+    return ""
+  }
+  return countries.getName(countryCode, "en") || ""
+}
+
+export default function ServerDetailClient({ server_id }: { server_id: number }) {
   const t = useTranslations("ServerDetailClient")
   const router = useRouter()
 
@@ -53,12 +68,10 @@ export default function ServerDetailClient({
 
   if (error) {
     return (
-      <>
-        <div className="flex flex-col items-center justify-center">
-          <p className="font-medium text-sm opacity-40">{error.message}</p>
-          <p className="font-medium text-sm opacity-40">{t("detail_fetch_error_message")}</p>
-        </div>
-      </>
+      <div className="flex flex-col items-center justify-center">
+        <p className="font-medium text-sm opacity-40">{error.message}</p>
+        <p className="font-medium text-sm opacity-40">{t("detail_fetch_error_message")}</p>
+      </div>
     )
   }
 
@@ -104,8 +117,8 @@ export default function ServerDetailClient({
                 className={cn(
                   "-mt-[0.3px] w-fit rounded-[6px] px-1 py-0 text-[9px] dark:text-white",
                   {
-                    " bg-green-800": online,
-                    " bg-red-600": !online,
+                    "bg-green-800": online,
+                    "bg-red-600": !online,
                   },
                 )}
               >
@@ -170,7 +183,9 @@ export default function ServerDetailClient({
               <section className="flex flex-col items-start gap-0.5">
                 <p className="text-muted-foreground text-xs">{t("Region")}</p>
                 <section className="flex items-start gap-1">
-                  <div className="text-start text-xs">{countries.getName(country_code, "en")}</div>
+                  {getCountryDisplayName(country_code) && (
+                    <div className="text-start text-xs">{getCountryDisplayName(country_code)}</div>
+                  )}
                   <ServerFlag className="-mt-[1px] text-[11px]" country_code={country_code} />
                 </section>
               </section>

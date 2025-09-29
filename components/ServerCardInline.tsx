@@ -1,20 +1,16 @@
-import type { NezhaAPISafe } from "@/app/types/nezha-api"
+import Link from "next/link"
+import { useTranslations } from "next-intl"
 import ServerFlag from "@/components/ServerFlag"
 import ServerUsageBar from "@/components/ServerUsageBar"
 import { Card } from "@/components/ui/card"
+import type { NezhaAPISafe } from "@/lib/drivers/types"
 import getEnv from "@/lib/env-entry"
 import { GetFontLogoClass, GetOsName, MageMicrosoftWindows } from "@/lib/logo-class"
 import { cn, formatBytes, formatNezhaInfo } from "@/lib/utils"
-import { useTranslations } from "next-intl"
-import Link from "next/link"
 
 import { Separator } from "./ui/separator"
 
-export default function ServerCardInline({
-  serverInfo,
-}: {
-  serverInfo: NezhaAPISafe
-}) {
+export default function ServerCardInline({ serverInfo }: { serverInfo: NezhaAPISafe }) {
   const t = useTranslations("ServerCard")
   const { id, name, country_code, online, cpu, up, down, mem, stg, host } =
     formatNezhaInfo(serverInfo)
@@ -49,7 +45,7 @@ export default function ServerCardInline({
             <p
               className={cn(
                 "break-normal font-bold tracking-tight",
-                showFlag ? "text-xs " : "text-sm",
+                showFlag ? "text-xs" : "text-sm",
               )}
             >
               {name}
@@ -145,7 +141,10 @@ export default function ServerCardInline({
           </div>
           <div className="relative w-28">
             <p
-              className={cn("break-normal font-bold tracking-tight", showFlag ? "text-xs" : "text-sm")}
+              className={cn(
+                "break-normal font-bold tracking-tight",
+                showFlag ? "text-xs" : "text-sm",
+              )}
             >
               {name}
             </p>

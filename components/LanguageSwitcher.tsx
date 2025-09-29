@@ -1,5 +1,7 @@
 "use client"
 
+import { CheckCircleIcon, LanguageIcon } from "@heroicons/react/20/solid"
+import { useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -7,11 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { localeItems } from "@/i18n-metadata"
 import { setUserLocale } from "@/i18n/locale"
+import { localeItems } from "@/i18n-metadata"
 import { cn } from "@/lib/utils"
-import { CheckCircleIcon, LanguageIcon } from "@heroicons/react/20/solid"
-import { useLocale } from "next-intl"
 
 export function LanguageSwitcher() {
   const locale = useLocale()
@@ -28,6 +28,7 @@ export function LanguageSwitcher() {
           variant="outline"
           size="sm"
           className="cursor-pointer rounded-full bg-white px-[9px] hover:bg-accent/50 dark:bg-black dark:hover:bg-accent/50"
+          title="Change language"
         >
           <LanguageIcon className="size-4" />
           <span className="sr-only">Change language</span>

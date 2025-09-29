@@ -1,8 +1,8 @@
-import { auth } from "@/auth"
-import getEnv from "@/lib/env-entry"
-import { GetNezhaData } from "@/lib/serverFetch"
 import { redirect } from "next/navigation"
 import { NextResponse } from "next/server"
+import { auth } from "@/auth"
+import getEnv from "@/lib/env-entry"
+import { GetServerData } from "@/lib/serverFetchV2"
 
 export const dynamic = "force-dynamic"
 
@@ -20,7 +20,7 @@ export async function GET() {
   }
 
   try {
-    const data = await GetNezhaData()
+    const data = await GetServerData()
     return NextResponse.json(data, { status: 200 })
   } catch (error) {
     const err = error as ResError

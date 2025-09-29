@@ -1,9 +1,10 @@
 "use client"
 
+import { geoEquirectangular, geoPath } from "d3-geo"
 import MapTooltip from "@/app/(main)/ClientComponents/main/MapTooltip"
 import { useTooltip } from "@/app/context/tooltip-context"
 import { countryCoordinates } from "@/lib/geo/geo-limit"
-import { geoEquirectangular, geoPath } from "d3-geo"
+import { getCountryCodeForMap } from "@/lib/utils"
 
 interface InteractiveMapProps {
   countries: string[]
@@ -42,7 +43,7 @@ export function InteractiveMap({
       >
         <title>Interactive Map</title>
         <defs>
-          <pattern id="dots" width="2" height="2" patternUnits="userSpaceOnUse">
+          <pattern width="2" height="2" patternUnits="userSpaceOnUse">
             <circle cx="1" cy="1" r="0.5" fill="currentColor" />
           </pattern>
         </defs>
@@ -78,9 +79,10 @@ export function InteractiveMap({
                   if (path.centroid(feature)) {
                     const countryCode = feature.properties.iso_a2_eh
                     const countryServers = nezhaServerList.result
-                      .filter(
-                        (server: any) => server.host.CountryCode?.toUpperCase() === countryCode,
-                      )
+                      .filter((server: any) => {
+                        const serverCountryCode = getCountryCodeForMap(server.host.CountryCode)
+                        return serverCountryCode === countryCode
+                      })
                       .map((server: any) => ({
                         id: server.id,
                         name: server.name,
@@ -121,7 +123,10 @@ export function InteractiveMap({
                 key={countryCode}
                 onMouseEnter={() => {
                   const countryServers = nezhaServerList.result
-                    .filter((server: any) => server.host.CountryCode?.toUpperCase() === countryCode)
+                    .filter((server: any) => {
+                      const serverCountryCode = getCountryCodeForMap(server.host.CountryCode)
+                      return serverCountryCode === countryCode
+                    })
                     .map((server: any) => ({
                       id: server.id,
                       name: server.name,
